@@ -1,9 +1,10 @@
 // Get the necessary elements
 const inputBox = document.getElementById('input-box');
 const listContainer = document.getElementById('list-container');
+const addBtn = document.getElementById('add-btn');
 
 // Add a task when the 'Add' button is clicked
-document.getElementById('add-btn').addEventListener('click', addTask);
+addBtn.addEventListener('click', addTask);
 
 // Add a task when the 'Enter' key is pressed
 inputBox.addEventListener('keypress', (event) => {
@@ -40,11 +41,14 @@ function addTask() {
 
   // Save the tasks to local storage
   saveData();
+
+  // Add click event listeners to the newly added close button
+  closeBtn.click();
 }
 
 // Function to remove a task
-function removeTask(event) {
-  const li = event.target.parentElement;
+function removeTask() {
+  const li = this.parentElement;
   listContainer.removeChild(li);
 
   // Save the tasks to local storage
@@ -66,4 +70,12 @@ function showList() {
     listContainer.innerHTML = savedData;
 
     // Add click event listeners to all close buttons
+    const closeBtns = document.getElementsByClassName('close');
+    for (let i = 0; i < closeBtns.length; i++) {
+      closeBtns[i].addEventListener('click', removeTask);
+    }
+  }
+}
 
+// Call the showList function to load tasks from local storage on page load
+showList();
