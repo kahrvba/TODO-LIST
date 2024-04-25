@@ -1,35 +1,69 @@
-const inputbox = document.getElementById('input-box');
+// Get the necessary elements
+const inputBox = document.getElementById('input-box');
 const listContainer = document.getElementById('list-container');
-function addtask(){
-    if(inputbox.value === ''){
-        alert("you must write somthing");
-    }
-    else{
-      let li =document.createElement("li");
-      li.innerHTML = inputbox.value;
-      listContainer.appendChild(li);
-      let span = document.createElement("span");
-      span.innerHTML= "\u00d7";
-      li.appendChild(span);
 
-    }
-    inputbox.value = "";
-    savedata();
+// Add a task when the 'Add' button is clicked
+document.getElementById('add-btn').addEventListener('click', addTask);
+
+// Add a task when the 'Enter' key is pressed
+inputBox.addEventListener('keypress', (event) => {
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    addTask();
+  }
+});
+
+// Function to add a task
+function addTask() {
+  if (inputBox.value.trim() === '') {
+    alert('Please enter a task');
+    return;
+  }
+
+  // Create a new list item
+  const li = document.createElement('li');
+  li.innerHTML = inputBox.value.trim();
+
+  // Create a close button for the list item
+  const closeBtn = document.createElement('span');
+  closeBtn.innerHTML = '&times;';
+  closeBtn.addEventListener('click', removeTask);
+
+  // Add the close button to the list item
+  li.appendChild(closeBtn);
+
+  // Add the list item to the list container
+  listContainer.appendChild(li);
+
+  // Clear the input box
+  inputBox.value = '';
+
+  // Save the tasks to local storage
+  saveData();
 }
-listContainer.addEventListener("click",function(e){
-if(e.target.tagName === "LI"){
-    e.target.classList.toggle("checked");
-    savedata();
+
+// Function to remove a task
+function removeTask(event) {
+  const li = event.target.parentElement;
+  listContainer.removeChild(li);
+
+  // Save the tasks to local storage
+  saveData();
 }
-else if(e.target.tagName === "SPAN"){
-    e.target.parentElement.remove();
-    savedata();
+
+// Function to save tasks to local storage
+function saveData() {
+  localStorage.setItem('data', Array.from(listContainer.children)
+    .map(li => li.outerHTML)
+    .join('')
+  );
 }
-},false);
-function savedata(){
-    localStorage.setItem("data", listContainer.innerHTML);
-}
-function Showlist(){
-    listContainer.innerHTML = localStorage.getItem("data");
-}
+
+// Function to load tasks from local storage
+function showList() {
+  const savedData = localStorage.getItem('data');
+  if (savedData) {
+    listContainer.innerHTML = savedData;
+
+    // Add click event listeners to all close buttons
 
